@@ -1,0 +1,27 @@
+name: Python Hello CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test_hello:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      # This checks out the entire repository (devops-intern-final1)
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+        
+    - name: Execute hello.py
+      # The file is expected to be in the root of the project directory
+      run: |
+        echo "Running the simple Python script from the CI pipeline..."
+        python hello.py
