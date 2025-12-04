@@ -27,7 +27,7 @@ jobs:
         python-version: '3.x'
         
     - name: Run Unit Tests
-      # CRITICAL FIX: Explicitly change directory before running the test
+      # CRITICAL FIX: Explicitly change directory for the test step
       run: |
         echo "Running the test suite from ${{ env.PROJECT_DIR }}..."
         cd ${{ env.PROJECT_DIR }}
@@ -54,7 +54,7 @@ jobs:
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v5
       with:
-        # CRITICAL FIX: Set the Docker build context to the project directory
+        # CRITICAL FIX: Set the Docker build context to the subdirectory
         context: ./${{ env.PROJECT_DIR }}
         push: true
-        tags: ${{ env.GHCR_REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        tags: ${{ env.GHCR_REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest
