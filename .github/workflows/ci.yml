@@ -6,12 +6,8 @@ on:
   pull_request:
     branches: [ main ]
 
-# Set the working directory for all jobs to the project folder
-defaults:
-  run:
-    working-directory: ${{ github.workspace }}/devops-intern-final1
-
 env:
+  PROJECT_DIR: devops-intern-final1
   IMAGE_NAME: devops-hello
   GHCR_REGISTRY: ghcr.io
 
@@ -31,10 +27,10 @@ jobs:
         python-version: '3.x'
         
     - name: Run Unit Tests
-      # Since 'defaults.run.working-directory' is set above, 
-      # this command runs inside devops-intern-final1/
+      # CRITICAL FIX: Explicitly change directory before running the test
       run: |
-        echo "Running the test suite..."
+        echo "Running the test suite from ${{ env.PROJECT_DIR }}..."
+        cd ${{ env.PROJECT_DIR }}
         python3 -m unittest test_hello.py
 
   # ----------------------------------------------------
@@ -58,7 +54,7 @@ jobs:
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v5
       with:
-        # Use the relative path from the github.workspace (repo root)
-        context: ./devops-intern-final1
+        # CRITICAL FIX: Set the Docker build context to the project directory
+        context: ./${{ env.PROJECT_DIR }}
         push: true
         tags: ${{ env.GHCR_REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
