@@ -1,4 +1,4 @@
-name: Python Hello CI
+name: Python Hello CI/CD
 
 on:
   push:
@@ -6,13 +6,19 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  PROJECT_DIR: devops-intern-final1
+  IMAGE_NAME: devops-hello
+  GHCR_REGISTRY: ghcr.io
+
 jobs:
+  # ----------------------------------------------------
+  # 1. CI Job: Runs the tests
+  # ----------------------------------------------------
   test_hello:
     runs-on: ubuntu-latest
-    
     steps:
     - name: Checkout Repository
-      # This checks out the entire repository (devops-intern-final1)
       uses: actions/checkout@v4
       
     - name: Set up Python
@@ -20,8 +26,36 @@ jobs:
       with:
         python-version: '3.x'
         
-    - name: Execute hello.py
-      # The file is expected to be in the root of the project directory
+    - name: Run Unit Tests
+      # Run the test suite from the project directory
       run: |
-        echo "Running the simple Python script from the CI pipeline..."
-        python hello.py
+        echo "Running the test suite..."
+        cd ${{ env.PROJECT_DIR }}
+        python3 -m unittest test_hello.py
+
+  # ----------------------------------------------------
+  # 2. CD Job: Builds and Pushes Docker Image
+  # ----------------------------------------------------
+  build_and_publish:
+    runs-on: ubuntu-latest
+    needs: test_hello # Only runs if tests pass
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.GHCR_REGISTRY }}
+        username: ${{ github.actor }}
+        # GITHUB_TOKEN is automatically provided by GitHub Actions for this task
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: ${{ env.PROJECT_DIR }} # Build context is the project folder
+        push: true
+        tags: ${{ env.GHCR_REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        # The image will be tagged with ghcr.io/<owner>/devops_intern/devops-hello:<commit_sha>
