@@ -1,5 +1,6 @@
 [![CI Status](https://github.com/workspaces/devops_intern/actions/workflows/ci.yml/badge.svg)](https://github.com/workspaces/devops_intern/actions/workflows/ci.yml)
 
+
 # 🛠️ DevOps Intern Final Project
 ## Name: [Shalini K]
 ## Date: [04-12-2025]
