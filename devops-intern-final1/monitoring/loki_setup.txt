@@ -1,0 +1,31 @@
+# Loki Monitoring Setup Documentation
+
+This file documents the steps taken to configure a local monitoring stack using Docker Compose.
+
+## 1. How Loki and Promtail were started
+
+The entire stack (Loki, Promtail, Grafana) is defined in 'monitoring/docker-compose.yml'.
+
+**Start Command:**
+To run the services locally using Docker:
+```bash
+cd devops-intern-final1/monitoring
+docker-compose up -d
+```
+
+## 2. Command to view logs (Grafana Interface)
+
+**Log Query Command Example (LogQL):**
+To find all logs from our application container:
+```logql
+{job="devops-app"}
+```
+
+## 3. Alternative Verification Command (CLI)
+
+If you have the Loki CLI (`logcli`) installed, you can query directly:
+
+```bash
+# Query the local Loki instance
+logcli query --addr=http://localhost:3100 '{job="devops-app"}'
+```
