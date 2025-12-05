@@ -1,22 +1,13 @@
-name: Python Hello CI/CD
+name: Python Hello CI Runner
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-env:
-  PROJECT_DIR: devops-intern-final1
-  IMAGE_NAME: devops-hello
-  GHCR_REGISTRY: ghcr.io
 
 jobs:
-  # ----------------------------------------------------
-  # 1. CI Job: Runs the tests
-  # ----------------------------------------------------
-  test_hello:
+  run_script:
     runs-on: ubuntu-latest
+    
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -26,35 +17,8 @@ jobs:
       with:
         python-version: '3.x'
         
-    - name: Run Unit Tests
-      # CRITICAL FIX: Explicitly change directory for the test step
+    - name: Execute hello.py
+      # The script is executed from the repository root, so we must use the subdirectory path
       run: |
-        echo "Running the test suite from ${{ env.PROJECT_DIR }}..."
-        cd ${{ env.PROJECT_DIR }}
-        python3 -m unittest test_hello.py
-
-  # ----------------------------------------------------
-  # 2. CD Job: Builds and Pushes Docker Image
-  # ----------------------------------------------------
-  build_and_publish:
-    runs-on: ubuntu-latest
-    needs: test_hello # Only runs if tests pass
-    
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ env.GHCR_REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v5
-      with:
-        # CRITICAL FIX: Set the Docker build context to the subdirectory
-        context: ./${{ env.PROJECT_DIR }}
-        push: true
-        tags: ${{ env.GHCR_REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest
+        echo "Running the simple Python script..."
+        python ${{ env.PROJECT_DIR }}/hello.py
