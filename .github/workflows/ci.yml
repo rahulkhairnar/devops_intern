@@ -21,4 +21,4 @@ jobs:
       # The runner starts at the repository root, so we use the full path.
       run: |
         echo "Starting python script execution..."
-        python devops-intern-final1/hello.py
+        python 01-Basics/hello.py
