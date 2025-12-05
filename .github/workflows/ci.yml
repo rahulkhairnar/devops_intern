@@ -1,4 +1,4 @@
-name: Python Hello CI Runner
+name: Basic Hello Runner
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
         python-version: '3.x'
         
     - name: Execute hello.py
-      # The script is executed from the repository root, so we must use the subdirectory path
+      # The runner starts at the repository root, so we use the full path.
       run: |
-        echo "Running the simple Python script..."
-        python ${{ env.PROJECT_DIR }}/hello.py
+        echo "Starting python script execution..."
+        python devops-intern-final1/hello.py
